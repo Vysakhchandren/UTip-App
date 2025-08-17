@@ -1,3 +1,4 @@
+
 import 'package:calculator_app/utip.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(context.widget);
+
     return MaterialApp(
       title: 'UTip App',
       theme: ThemeData(

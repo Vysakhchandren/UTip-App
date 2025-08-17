@@ -1,5 +1,8 @@
+import 'dart:developer';
+
+import 'package:calculator_app/widgets/person_counter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/material/theme.dart';
+
 
 class UTip extends StatefulWidget {
   const UTip({super.key});
@@ -9,25 +12,29 @@ class UTip extends StatefulWidget {
 }
 
 class _UTipState extends State<UTip> {
-   int _personCount = 1;
+  int _personCount = 1;
+
   //methods
 
-  void increment(){
+  void increment() {
+    log("Calling increment function");
     setState(() {
       _personCount++;
     });
   }
 
-   void decrement(){
-     setState(() {
-       if(_personCount >0){
-       _personCount--;}
-     });
-   }
+  void decrement() {
+    log("Calling decrement function");
+    setState(() {
+      if (_personCount > 0) {
+        _personCount--;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    print(context.widget);
+    //print(context.widget);
     var themeData = Theme.of(context);
     final style = themeData.textTheme.titleMedium!.copyWith(
       color: themeData.colorScheme.onPrimary,
@@ -81,7 +88,7 @@ class _UTipState extends State<UTip> {
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (String value) {
-                      print("Value= $value");
+                      log("Value= $value");
                     },
                   ),
                   //Split Bill Area
@@ -90,20 +97,10 @@ class _UTipState extends State<UTip> {
                     children: [
                       Text("Split", style: themeData.textTheme.titleMedium),
 
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: decrement,
-                            icon: Icon(Icons.remove),
-                            color: themeData.colorScheme.primary,
-                          ),
-                          Text(_personCount.toString(), style: themeData.textTheme.titleMedium),
-                          IconButton(
-                            onPressed: increment,
-                            icon: Icon(Icons.add),
-                            color: themeData.colorScheme.primary,
-                          ),
-                        ],
+                      PersonCounter(
+                        themeData: themeData,
+                        personCount: _personCount,
+                        onDecrement: decrement,onIncrement: increment,
                       ),
                     ],
                   ),
@@ -116,3 +113,5 @@ class _UTipState extends State<UTip> {
     );
   }
 }
+
+
