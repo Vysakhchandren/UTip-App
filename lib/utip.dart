@@ -9,6 +9,22 @@ class UTip extends StatefulWidget {
 }
 
 class _UTipState extends State<UTip> {
+   int _personCount = 1;
+  //methods
+
+  void increment(){
+    setState(() {
+      _personCount++;
+    });
+  }
+
+   void decrement(){
+     setState(() {
+       if(_personCount >0){
+       _personCount--;}
+     });
+   }
+
   @override
   Widget build(BuildContext context) {
     print(context.widget);
@@ -40,6 +56,56 @@ class _UTipState extends State<UTip> {
                       color: themeData.colorScheme.onPrimary,
                       fontSize: themeData.textTheme.displaySmall?.fontSize,
                     ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(
+                  color: themeData.colorScheme.primary,
+                  width: 2,
+                ),
+              ),
+              child: Column(
+                children: [
+                  TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.attach_money),
+                      labelText: "Bill Amount",
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (String value) {
+                      print("Value= $value");
+                    },
+                  ),
+                  //Split Bill Area
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Split", style: themeData.textTheme.titleMedium),
+
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: decrement,
+                            icon: Icon(Icons.remove),
+                            color: themeData.colorScheme.primary,
+                          ),
+                          Text(_personCount.toString(), style: themeData.textTheme.titleMedium),
+                          IconButton(
+                            onPressed: increment,
+                            icon: Icon(Icons.add),
+                            color: themeData.colorScheme.primary,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
