@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:calculator_app/widgets/bill_amount_field.dart';
 import 'package:calculator_app/widgets/person_counter.dart';
 import 'package:calculator_app/widgets/tip_slider.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,15 @@ class UTip extends StatefulWidget {
 class _UTipState extends State<UTip> {
   int _personCount = 1;
   double _tipPercentage = 0.0;
+  double _billTotal =0.0;
+
+  double totalPerPerson(){
+    return(((_billTotal*_tipPercentage)+(_billTotal)) / _personCount);
+}
+
+double totalTip(){
+    return(_billTotal*_tipPercentage);
+}
 
   //methods
 
@@ -27,7 +37,7 @@ class _UTipState extends State<UTip> {
   void decrement() {
     log("Calling decrement function");
     setState(() {
-      if (_personCount > 0) {
+      if (_personCount > 1) {
         _personCount--;
       }
     });
@@ -37,6 +47,8 @@ class _UTipState extends State<UTip> {
   Widget build(BuildContext context) {
     //print(context.widget);
     var themeData = Theme.of(context);
+    double total = totalPerPerson();
+    double totalT = totalTip();
     final style = themeData.textTheme.titleMedium!.copyWith(
       color: themeData.colorScheme.onPrimary,
       fontWeight: FontWeight.bold,
@@ -59,7 +71,7 @@ class _UTipState extends State<UTip> {
                 children: [
                   Text("Total Per Person", style: style),
                   Text(
-                    "\$24.45",
+                    "$total",
                     style: style.copyWith(
                       color: themeData.colorScheme.onPrimary,
                       fontSize: themeData.textTheme.displaySmall?.fontSize,
@@ -72,6 +84,7 @@ class _UTipState extends State<UTip> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
+              padding:const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(
@@ -81,15 +94,13 @@ class _UTipState extends State<UTip> {
               ),
               child: Column(
                 children: [
-                  TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.attach_money),
-                      labelText: "Bill Amount",
-                    ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (String value) {
-                      log("Value= $value");
+                  BillAmountField(
+                    billAmount: _billTotal.toString(),
+                    onChanged: (value) {
+                      setState(() {
+                        _billTotal = double.parse(value);
+                      });
+                      // log("Amount: $value");
                     },
                   ),
                   //Split Bill Area
@@ -110,16 +121,19 @@ class _UTipState extends State<UTip> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("Tip", style: themeData.textTheme.titleMedium),
-                      Text("\$20", style: themeData.textTheme.titleMedium),
+                      Text("$totalT", style: themeData.textTheme.titleMedium),
                     ],
                   ),
                   //slider text
                   Text("${(_tipPercentage * 100).round()}%"),
-                  TipSlider(tipPercentage: _tipPercentage, onChanged: (double value) {
-                    setState(() {
-                      _tipPercentage = value;
-                    });
-                  },),
+                  TipSlider(
+                    tipPercentage: _tipPercentage,
+                    onChanged: (double value) {
+                      setState(() {
+                        _tipPercentage = value;
+                      });
+                    },
+                  ),
                 ],
               ),
             ),
