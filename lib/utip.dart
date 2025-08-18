@@ -8,7 +8,10 @@ import 'package:calculator_app/widgets/total_per_person.dart';
 import 'package:flutter/material.dart';
 
 class UTip extends StatefulWidget {
-  const UTip({super.key});
+  final bool isDark;
+  final ValueChanged<bool> onThemeChanged;
+
+  UTip({required this.isDark, required this.onThemeChanged});
 
   @override
   State<UTip> createState() => _UTipState();
@@ -56,66 +59,71 @@ class _UTipState extends State<UTip> {
       fontWeight: FontWeight.bold,
     );
     return Scaffold(
-      appBar: AppBar(title: Text("UTip")),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TotalPerPerson(themeData: themeData, style: style, total: total),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(
-                  color: themeData.colorScheme.primary,
-                  width: 2,
+      appBar: AppBar(
+        title: Text("UTip"),
+        actions: [
+          Switch(value: widget.isDark, onChanged: widget.onThemeChanged),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TotalPerPerson(themeData: themeData, style: style, total: total),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(
+                    color: themeData.colorScheme.primary,
+                    width: 2,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    BillAmountField(
+                      billAmount: _billTotal.toString(),
+                      onChanged: (value) {
+                        setState(() {
+                          _billTotal = double.parse(value);
+                        });
+                        // log("Amount: $value");
+                      },
+                    ),
+                    //Split Bill Area
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Split", style: themeData.textTheme.titleMedium),
+
+                        PersonCounter(
+                          themeData: themeData,
+                          personCount: _personCount,
+                          onDecrement: decrement,
+                          onIncrement: increment,
+                        ),
+                      ],
+                    ),
+                    TipRow(themeData: themeData, totalT: totalT),
+                    //slider text
+                    Text("${(_tipPercentage * 100).round()}%"),
+                    TipSlider(
+                      tipPercentage: _tipPercentage,
+                      onChanged: (double value) {
+                        setState(() {
+                          _tipPercentage = value;
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ),
-              child: Column(
-                children: [
-                  BillAmountField(
-                    billAmount: _billTotal.toString(),
-                    onChanged: (value) {
-                      setState(() {
-                        _billTotal = double.parse(value);
-                      });
-                      // log("Amount: $value");
-                    },
-                  ),
-                  //Split Bill Area
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Split", style: themeData.textTheme.titleMedium),
-
-                      PersonCounter(
-                        themeData: themeData,
-                        personCount: _personCount,
-                        onDecrement: decrement,
-                        onIncrement: increment,
-                      ),
-                    ],
-                  ),
-                  TipRow(themeData: themeData, totalT: totalT),
-                  //slider text
-                  Text("${(_tipPercentage * 100).round()}%"),
-                  TipSlider(
-                    tipPercentage: _tipPercentage,
-                    onChanged: (double value) {
-                      setState(() {
-                        _tipPercentage = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
-
-
