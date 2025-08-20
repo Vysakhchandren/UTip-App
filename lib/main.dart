@@ -1,8 +1,11 @@
+import 'package:calculator_app/providers/tip_calculator_model.dart';
 import 'package:calculator_app/utip.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(create: (context) => TipCalculatorModel(),
+  child: const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -17,6 +20,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'UTip App',

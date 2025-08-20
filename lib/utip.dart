@@ -1,59 +1,29 @@
-import 'dart:developer';
-
+import 'package:calculator_app/providers/tip_calculator_model.dart';
 import 'package:calculator_app/widgets/bill_amount_field.dart';
 import 'package:calculator_app/widgets/person_counter.dart';
 import 'package:calculator_app/widgets/tip_row.dart';
 import 'package:calculator_app/widgets/tip_slider.dart';
 import 'package:calculator_app/widgets/total_per_person.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class UTip extends StatefulWidget {
   final bool isDark;
   final ValueChanged<bool> onThemeChanged;
 
-  UTip({required this.isDark, required this.onThemeChanged});
+  const UTip({super.key, required this.isDark, required this.onThemeChanged});
 
   @override
   State<UTip> createState() => _UTipState();
 }
 
 class _UTipState extends State<UTip> {
-  int _personCount = 1;
-  double _tipPercentage = 0.0;
-  double _billTotal = 0.0;
-
-  double totalPerPerson() {
-    return (((_billTotal * _tipPercentage) + (_billTotal)) / _personCount);
-  }
-
-  double totalTip() {
-    return (_billTotal * _tipPercentage);
-  }
-
-  //methods
-
-  void increment() {
-    log("Calling increment function");
-    setState(() {
-      _personCount++;
-    });
-  }
-
-  void decrement() {
-    log("Calling decrement function");
-    setState(() {
-      if (_personCount > 1) {
-        _personCount--;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final model = Provider.of<TipCalculatorModel>(context);
     //print(context.widget);
     var themeData = Theme.of(context);
-    double total = totalPerPerson();
-    double totalT = totalTip();
+
     final style = themeData.textTheme.titleMedium!.copyWith(
       color: themeData.colorScheme.onPrimary,
       fontWeight: FontWeight.bold,
@@ -69,7 +39,11 @@ class _UTipState extends State<UTip> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TotalPerPerson(themeData: themeData, style: style, total: total),
+            TotalPerPerson(
+              themeData: themeData,
+              style: style,
+              total: model.totalPerPerson,
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -84,12 +58,9 @@ class _UTipState extends State<UTip> {
                 child: Column(
                   children: [
                     BillAmountField(
-                      billAmount: _billTotal.toString(),
+                      billAmount: model.billTotal.toString(),
                       onChanged: (value) {
-                        setState(() {
-                          _billTotal = double.parse(value);
-                        });
-                        // log("Amount: $value");
+                        model.updateBillTotal(double.parse(value));
                       },
                     ),
                     //Split Bill Area
@@ -97,24 +68,31 @@ class _UTipState extends State<UTip> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("Split", style: themeData.textTheme.titleMedium),
-
                         PersonCounter(
                           themeData: themeData,
-                          personCount: _personCount,
-                          onDecrement: decrement,
-                          onIncrement: increment,
+                          personCount: model.personCount,
+                          onDecrement: () {
+                            if (model.personCount > 1) {
+                              model.updatePersonCount(model.personCount -1);
+                            }
+                          },
+                          onIncrement: () {
+                            model.updatePersonCount(model.personCount +1);
+                          },
                         ),
                       ],
                     ),
-                    TipRow(themeData: themeData, totalT: totalT),
+                    TipRow(
+                      themeData: themeData,
+                      billTotal: model.billTotal,
+                      percentage: model.tipPercentage,
+                    ),
                     //slider text
-                    Text("${(_tipPercentage * 100).round()}%"),
+                    Text("${(model.tipPercentage * 100).round()}%"),
                     TipSlider(
-                      tipPercentage: _tipPercentage,
+                      tipPercentage: model.tipPercentage,
                       onChanged: (double value) {
-                        setState(() {
-                          _tipPercentage = value;
-                        });
+                        model.updateTipPercentage(value);
                       },
                     ),
                   ],
