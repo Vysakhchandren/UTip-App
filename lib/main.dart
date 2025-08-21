@@ -1,11 +1,19 @@
+import 'package:calculator_app/providers/theme_provider.dart';
 import 'package:calculator_app/providers/tip_calculator_model.dart';
 import 'package:calculator_app/utip.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider(create: (context) => TipCalculatorModel(),
-  child: const MyApp()));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => TipCalculatorModel()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -21,18 +29,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'UTip App',
-      themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
-      // follow system light/dark
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.light, // ✅ brightness is set here
-        ),
-        useMaterial3: true,
-      ),
+      theme: themeProvider.currentTheme,
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.deepPurple,

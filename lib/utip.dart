@@ -1,3 +1,4 @@
+import 'package:calculator_app/providers/theme_provider.dart';
 import 'package:calculator_app/providers/tip_calculator_model.dart';
 import 'package:calculator_app/widgets/bill_amount_field.dart';
 import 'package:calculator_app/widgets/person_counter.dart';
@@ -21,18 +22,20 @@ class _UTipState extends State<UTip> {
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<TipCalculatorModel>(context);
-    //print(context.widget);
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     var themeData = Theme.of(context);
 
     final style = themeData.textTheme.titleMedium!.copyWith(
       color: themeData.colorScheme.onPrimary,
       fontWeight: FontWeight.bold,
     );
+
     return Scaffold(
       appBar: AppBar(
         title: Text("UTip"),
         actions: [
-          Switch(value: widget.isDark, onChanged: widget.onThemeChanged),
+          Switch(value: themeProvider.isDarkMode, onChanged: (value) => themeProvider.toggleTheme(),),
         ],
       ),
       body: SingleChildScrollView(
